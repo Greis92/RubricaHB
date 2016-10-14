@@ -1,6 +1,8 @@
 package servizi;  
  
 
+import java.util.Map;
+
 import model.Rubrica; 
 import model.Voce; 
 import dao.RubricaDao;
@@ -17,7 +19,6 @@ public class ServiziRubrica {
 		
 		boolean res = false;
 		
-		
 		Rubrica r = new Rubrica(nome);
 		
 		res = rDao.creaRubrica(r);
@@ -32,51 +33,59 @@ public class ServiziRubrica {
  		boolean res = false;
  		Voce v = new Voce(nome,cognome,telefono);
  		
- 		v.setRubrica(r);
- 		r.addVoce(v);
+ 		v.setRubrica(r); // SPECIFICA IN QUALE RUBRICA INSERIRE LA VOCE
+ 		r.addVoce(v); // AGGIUNGE IN QUELLA RUBRICA LA VOCE
  		
- 		res = vDao.insertVoce(v);
- 		rDao.updateRubrica(r);
+ 		res = vDao.insertVoce(v); // INSERISCE VOCE NEL DATABASE
+ 		rDao.updateRubrica(r); // AGGIORNA RUBRICA NEL DATABASE
  		
  		return res;
  	}
  	
-// 	// RITORNA UNA VOCE DEL NOME E COGNOME E DELLA RUBRICA PASSATI COME PARAMETRO 
-// 	public Voce getVoce(Rubrica r, String nome, String cognome){ 
-// 		
-// 		Voce v = null; 
-// 		v = vDao.leggiVoceConNomeCognomeId(nome, cognome, r.getId_rubrica()); 
-// 		return v;		 
-// 	} 
-// 	
-// 	// RITORNA TUTTE LE VOCI DELLA RUBRICA PASSATA COME PARAMETRO
-// 	public Map<String, Voce> getAll(Rubrica r){ 
-// 		
-// 		return vDao.leggiVoceConId(r.getId_rubrica()); 
-// 	
-// 	} 
-// 	
-// 	// AGGIORNA VOCE DELLA RUBRICA PASSATA COME PARAMETRO
-// 	public Voce updateVoce(Rubrica r, String nomeVecchio, String cognomeVecchio,  
-// 			String nome, String cognome, String telefono){ 
-// 		
-// 		Voce v = null; 
-// 		v = vDao.leggiVoceConNomeCognomeId(nomeVecchio, cognomeVecchio, r.getId_rubrica()); 
-// 		if(v!=null){ 
-// 			vDao.updateVoce(nome, cognome, telefono, v.getId_voce()); 
-// 			v = vDao.leggiVoceConNomeCognomeId(nome, cognome, r.getId_rubrica()); 
-// 		} 
-// 		return v; 
-// 		
-// 	} 
-// 	
-// 	// CANCELLA VOCE CON NOME,COGNOME E RUBRICA PASSATI COME PARAMETRI
-// 	public void deleteVoce(Rubrica r, String nome, String cognome){ 
-// 		
-// 		Voce v = vDao.leggiVoceConNomeCognomeId(nome, cognome, r.getId_rubrica()); 
-// 		vDao.deleteVoce(v.getId_voce());		 
-// 	
-// 	} 
-// 
-// 	 
+ 	// RITORNA UNA VOCE DEL NOME E COGNOME E DELLA RUBRICA PASSATI COME PARAMETRO 
+ 	public Voce getVoce(Rubrica r, String nome, String cognome, String telefono){ 
+ 		
+ 		Voce v = null; 
+ 		
+ 		v = vDao.readAllVoce(r, nome, cognome, telefono);
+ 		
+ 		return v;		 
+ 	} 
+ 	
+ 	// RITORNA TUTTE LE VOCI DELLA RUBRICA PASSATA COME PARAMETRO
+ 	public Map<String, Voce> getAll(Rubrica r){ 
+ 		
+ 		Map<String,Voce> voci = null;
+ 		
+ 		voci = vDao.readAllVoci(r.getId_rubrica()); 
+ 		
+ 		return voci;
+ 	
+ 	} 
+ 	
+ 	// AGGIORNA VOCE DELLA RUBRICA PASSATA COME PARAMETRO
+ 	public Voce updateVoce(Rubrica r, String id, String nome, String cognome, String telefono){ 
+ 		
+ 		Voce v = vDao.readVoceConId(id);
+ 		
+ 		v.setNome(nome);
+ 		v.setCognome(cognome);
+ 		v.setTelefono(telefono);
+ 		
+ 		vDao.updateVoce(v);
+ 		
+ 		return v; 
+	
+ 	} 
+ 	
+ 	// CANCELLA VOCE CON NOME,COGNOME E RUBRICA PASSATI COME PARAMETRI
+ 	public void deleteVoce(Rubrica r, String nome, String cognome, String telefono){ 
+ 		
+ 		Voce v = vDao.readAllVoce(r,nome,cognome,telefono); 
+ 		
+ 		vDao.deleteVoce(v);		 
+ 	
+ 	} 
+ 
+ 	 
 } 
